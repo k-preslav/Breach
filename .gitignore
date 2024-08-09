@@ -1,9 +1,8 @@
-# Ignore the content folder
-/Breach/content/*
-
 # Ignore all obj and bin folders
-**/obj/
-**/bin/
+/Breach/obj/
+/Breach/bin/
+/MonoGame.ImGuiNet/obj/
+/MonoGame.ImGuiNet/bin/
 
 # Ignore user-specific files
 *.user
