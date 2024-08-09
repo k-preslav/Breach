@@ -1,0 +1,24 @@
+/home/preslav/Projects/Meme Arena/MonoGame.ImGuiNet/bin/Debug/net8.0/Monogame.ImGuiNet.deps.json
+/home/preslav/Projects/Meme Arena/MonoGame.ImGuiNet/bin/Debug/net8.0/Monogame.ImGuiNet.dll
+/home/preslav/Projects/Meme Arena/MonoGame.ImGuiNet/bin/Debug/net8.0/Monogame.ImGuiNet.pdb
+/home/preslav/Projects/Meme Arena/MonoGame.ImGuiNet/obj/Debug/net8.0/Monogame.ImGuiNet.csproj.AssemblyReference.cache
+/home/preslav/Projects/Meme Arena/MonoGame.ImGuiNet/obj/Debug/net8.0/Monogame.ImGuiNet.GeneratedMSBuildEditorConfig.editorconfig
+/home/preslav/Projects/Meme Arena/MonoGame.ImGuiNet/obj/Debug/net8.0/Monogame.ImGuiNet.AssemblyInfoInputs.cache
+/home/preslav/Projects/Meme Arena/MonoGame.ImGuiNet/obj/Debug/net8.0/Monogame.ImGuiNet.AssemblyInfo.cs
+/home/preslav/Projects/Meme Arena/MonoGame.ImGuiNet/obj/Debug/net8.0/Monogame.ImGuiNet.csproj.CoreCompileInputs.cache
+/home/preslav/Projects/Meme Arena/MonoGame.ImGuiNet/obj/Debug/net8.0/Monogame.ImGuiNet.dll
+/home/preslav/Projects/Meme Arena/MonoGame.ImGuiNet/obj/Debug/net8.0/refint/Monogame.ImGuiNet.dll
+/home/preslav/Projects/Meme Arena/MonoGame.ImGuiNet/obj/Debug/net8.0/Monogame.ImGuiNet.pdb
+/home/preslav/Projects/Meme Arena/MonoGame.ImGuiNet/obj/Debug/net8.0/ref/Monogame.ImGuiNet.dll
+/home/preslav/Projects/Breach/MonoGame.ImGuiNet/bin/Debug/net8.0/Monogame.ImGuiNet.deps.json
+/home/preslav/Projects/Breach/MonoGame.ImGuiNet/bin/Debug/net8.0/Monogame.ImGuiNet.dll
+/home/preslav/Projects/Breach/MonoGame.ImGuiNet/bin/Debug/net8.0/Monogame.ImGuiNet.pdb
+/home/preslav/Projects/Breach/MonoGame.ImGuiNet/obj/Debug/net8.0/Monogame.ImGuiNet.csproj.AssemblyReference.cache
+/home/preslav/Projects/Breach/MonoGame.ImGuiNet/obj/Debug/net8.0/Monogame.ImGuiNet.GeneratedMSBuildEditorConfig.editorconfig
+/home/preslav/Projects/Breach/MonoGame.ImGuiNet/obj/Debug/net8.0/Monogame.ImGuiNet.AssemblyInfoInputs.cache
+/home/preslav/Projects/Breach/MonoGame.ImGuiNet/obj/Debug/net8.0/Monogame.ImGuiNet.AssemblyInfo.cs
+/home/preslav/Projects/Breach/MonoGame.ImGuiNet/obj/Debug/net8.0/Monogame.ImGuiNet.csproj.CoreCompileInputs.cache
+/home/preslav/Projects/Breach/MonoGame.ImGuiNet/obj/Debug/net8.0/Monogame.ImGuiNet.dll
+/home/preslav/Projects/Breach/MonoGame.ImGuiNet/obj/Debug/net8.0/refint/Monogame.ImGuiNet.dll
+/home/preslav/Projects/Breach/MonoGame.ImGuiNet/obj/Debug/net8.0/Monogame.ImGuiNet.pdb
+/home/preslav/Projects/Breach/MonoGame.ImGuiNet/obj/Debug/net8.0/ref/Monogame.ImGuiNet.dll
