@@ -1,0 +1,14 @@
+# Ignore the content folder
+/Breach/content/*
+
+# Ignore all obj and bin folders
+**/obj/
+**/bin/
+
+# Ignore user-specific files
+*.user
+*.suo
+
+# Ignore temporary files
+*.tmp
+*.log
