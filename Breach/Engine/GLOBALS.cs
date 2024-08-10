@@ -16,7 +16,7 @@ public static class Globals
 
     #region APPLICATION PROPERTIES
     public static string APP_Title = "Breach";
-    public static string APP_Version = "indev 0.0.4";
+    public static string APP_Version = "indev 0.0.5";
     public static int APP_Width = 512;
     public static int APP_Height = 512;
     public static bool APP_VSync = true;

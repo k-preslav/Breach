@@ -6,6 +6,7 @@ namespace BraketsEngine;
 public class Camera
 {
     public Vector2 TargetPosition;
+    public Color BackgroundColor = Color.Cyan;
     public Matrix TranslationMatrix;
 
     // Camera shake variables

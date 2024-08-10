@@ -10,6 +10,7 @@ using Microsoft.VisualBasic;
 using FontStashSharp;
 using System.Threading;
 using System.Linq;
+using System.Threading.Tasks;
 
 public class GameManager
 {
@@ -32,10 +33,49 @@ public class GameManager
     float _powerupSpawnTimer = 0;
     float _powerupUiTimer = 2;
 
-    string backgroundMusic = "background";
+
+    string backgroundMusicName = "background";
+
+    UIScreen gameHud = new UIScreen();
+    UIText healthText, pointsText, heatText, currentPowerupText;
+    UIImage healthImage, heatImage; 
+    public UIImage pointsImage;
+
+    UIScreen gameOverHud = new UIScreen();
+    UIText gameOverText, gameOverScoreText, countinueText;
+
+    UIScreen mainMenu = new UIScreen();
+    UIText titleText, startText;
+    bool isOnMainMenu = false;
 
     public void Start()
     {
+        Globals.Camera.BackgroundColor = Color.Black;
+
+        Globals.DEBUG_Overlay = false;
+        isOnMainMenu = true;
+
+        titleText = new UIText("Breach");
+        titleText.SetAlign(UIAllign.Center, new Vector2(0));
+        titleText.SetFontSize(62);
+
+        startText = new UIText("Press Enter to Play!");
+        startText.SetAlign(UIAllign.BottomCenter, new Vector2(0, 36));
+        startText.SetFont("NeorisRegular");
+        startText.SetFontSize(32);
+        startText.Opacity = 0.75f;
+        startText.Animate(UIAnimation.SmoothFlashing, 750, min: 0.35f);
+
+        mainMenu.AddElements([
+            titleText, startText
+        ]);
+    }
+
+    private async void StartGame()
+    {
+        LoadingScreen.Initialize();
+        LoadingScreen.Show();
+        
         Health = 100;
         Points = 0;
         Wave = 0;
@@ -44,41 +84,135 @@ public class GameManager
         Globals.GameManager = this;
         Globals.Camera.Center();
 
+        // Load all the UI
+        healthText = new UIText("100");
+        healthText.SetFontSize(22);
+        healthText.SetFont("NeorisBold");
+        healthText.SetAlign(UIAllign.TopLeft, new Vector2(48, 8));
+
+        healthImage = new UIImage("ui/hearth");
+        healthImage.SetAlign(UIAllign.TopLeft, new Vector2(10));
+        healthImage.Size = new Vector2(32);
+
+        heatText = new UIText("0");
+        heatText.SetFontSize(22);
+        heatText.SetFont("NeorisBold");
+        heatText.SetAlign(UIAllign.TopLeft, new Vector2(128, 8));
+
+        heatImage = new UIImage("ui/heat");
+        heatImage.SetAlign(UIAllign.TopLeft, new Vector2(96, 10));
+        heatImage.Size = new Vector2(32);
+
+        pointsText = new UIText("0");
+        pointsText.SetFontSize(22);
+        pointsText.SetFont("NeorisBold");
+        pointsText.SetAlign(UIAllign.TopLeft, new Vector2(198, 8));
+
+        pointsImage = new UIImage("ui/points");
+        pointsImage.SetAlign(UIAllign.TopLeft, new Vector2(166, 10));
+        pointsImage.Size = new Vector2(32);
+
+        currentPowerupText = new UIText();
+        currentPowerupText.SetAlign(UIAllign.Center, new Vector2(0));
+        currentPowerupText.SetFontSize(56);
+        currentPowerupText.Opacity = 0.35f;
+        currentPowerupText.visible = false;
+
+        gameHud.AddElements([
+            healthText, healthImage,
+            heatText, heatImage,
+            pointsText, pointsImage,
+            currentPowerupText
+        ]);
+
+        gameOverText = new UIText("Game Over!");
+        gameOverText.SetAlign(UIAllign.Center, new Vector2(0, -15));
+        gameOverText.SetFontSize(56);
+    
+        gameOverScoreText = new UIText("Score: 0");
+        gameOverScoreText.SetAlign(UIAllign.Center, new Vector2(0, 35));
+        gameOverScoreText.SetFontSize(46);
+        gameOverScoreText.Opacity = 0.75f;
+
+        countinueText = new UIText("Press Enter to Try Again!");
+        countinueText.SetAlign(UIAllign.BottomCenter, new Vector2(0, 36));
+        countinueText.SetFont("NeorisRegular");
+        countinueText.SetFontSize(32);
+        countinueText.Opacity = 0.75f;
+        countinueText.Animate(UIAnimation.SmoothFlashing, 750, min: 0.35f);
+
+        gameOverHud.AddElements([
+            gameOverText, gameOverScoreText,
+            countinueText
+        ]);
+        gameOverHud.Hide();
+
+        // Other loading (level, songs, etc)
         ContentLoader.Load(ContentType.Level, "level0");
 
-        var song = ContentLoader.GetSong(backgroundMusic);
+        var song = ContentLoader.GetSong(backgroundMusicName);
         song.Play();
         song.SetVolume(5);
 
         enemies = new List<Enemy>();
         player = new Player(new Vector2(Globals.APP_Width / 2, Globals.APP_Height - 50));
         damageIndicator = new DamageIndicator();
+
+        isOnMainMenu = false;
+        await LoadingScreen.Hide();
     }
 
     public void Update(float dt)
     {
+        if (isOnMainMenu)
+        {
+            if (Input.IsPressed(Keys.Enter))
+            {                
+                mainMenu.Unload();
+                StartGame();
+            }
+            return;
+        }
+
         if (GameOver)
         {
+            ContentLoader.GetSong(backgroundMusicName).Stop();
+            gameHud.Hide();
+
+            gameOverHud.Show();
+            gameOverScoreText.Text = $"Score: {Points}";
+
             if (Input.IsPressed(Keys.Enter))
             {
                 Globals.ENGINE_Main.Sprites.Clear();
+                
+                gameHud.Unload();
+                gameOverHud.Unload();
 
                 ParticleManager.UnloadAll();
                 ContentLoader.UnloadLevel("level0");
 
-                Start();
+                StartGame();
             }
             return;
         }
 
         if (Input.IsDown(Keys.LeftAlt) && Input.IsPressed(Keys.S))
         {
-            backgroundMusic = "background2";
-            ContentLoader.GetSong(backgroundMusic).Play();
+            backgroundMusicName = "background2";
+            ContentLoader.GetSong(backgroundMusicName).Play();
         }
 
         if (Health <= 0)
             GameOver = true;
+
+        if (Health <= 50)
+            if (!healthImage.animationRunning)
+                healthImage.Animate(UIAnimation.ZoomInOut, Health * 5, min:1, max:1.2f);
+
+        if (Wave >= 5)
+            if (!heatImage.animationRunning)
+                heatImage.Animate(UIAnimation.ZoomInOut, 250, min:1, max:1.1f);
 
         _powerupUiTimer -= dt;
 
@@ -138,43 +272,21 @@ public class GameManager
             enemySpawnCooldown = 0.5f;
             Wave = 6;
         }
-    }
 
-    internal void TempRendrer() // TODO: REMOVE THIS! THIS IS TEMPORARY
-    {
-        if (GameOver)
-        {
-            Globals.ENGINE_SpriteBatch.DrawString(
-                ContentLoader.GetFont("NeorisMedium", 72), $"Game Over! \n     Score {Points}", 
-                new Vector2(100, 200), Color.White
-            );
-            return;
-        }
-        
-        Globals.ENGINE_SpriteBatch.DrawString(
-            ContentLoader.GetFont("NeorisMedium", 24), $"HP: {Health}", 
-            new Vector2(250, 10), Color.White
-        );
-        Globals.ENGINE_SpriteBatch.DrawString(
-            ContentLoader.GetFont("NeorisMedium", 24), $"Points: {Points}", 
-            new Vector2(325, 10), Color.White
-        );
-        Globals.ENGINE_SpriteBatch.DrawString(
-            ContentLoader.GetFont("NeorisMedium", 24), $"Wave: {Wave}", 
-            new Vector2(425, 10), Color.White
-        );
+        healthText.Text = Health.ToString();
+        pointsText.Text = Points.ToString();
+        heatText.Text = Wave.ToString();
 
         if (player.currentPowerup != "none" && _powerupUiTimer > 0)
         {
-            Globals.ENGINE_SpriteBatch.DrawString(
-                ContentLoader.GetFont("NeorisMedium", 56), $"{player.currentPowerup}", 
-                new Vector2(256 - ContentLoader.GetFont("NeorisMedium", 56).MeasureString(player.currentPowerup).X / 2, 256), Color.DimGray
-            );
+            currentPowerupText.Text = player.currentPowerup;
+            currentPowerupText.visible = true;
         }
         else 
         {
             _powerupUiTimer = 2;
             player.currentPowerup = "none";
+            currentPowerupText.visible = false;
         }
     }
 

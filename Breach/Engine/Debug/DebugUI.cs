@@ -84,19 +84,19 @@ public class DebugUI
 
         sp.DrawString(
             ContentLoader.GetFont("NeorisMedium", 32), $"{_currentFps.ToString("0.0")} fps", 
-            new Vector2(10, 10), Color.White, effect: FontSystemEffect.Stroked, effectAmount: 3
+            new Vector2(10, 10), Color.White * 0.75f, effect: FontSystemEffect.Stroked, effectAmount: 3
         );
         sp.DrawString(
             ContentLoader.GetFont("NeorisMedium", 24), $"Version: {Globals.APP_Version}", 
-            new Vector2(10,45), Color.White, effect: FontSystemEffect.Stroked, effectAmount: 2
+            new Vector2(10,45), Color.White * 0.75f, effect: FontSystemEffect.Stroked, effectAmount: 2
         );
         sp.DrawString(
             ContentLoader.GetFont("NeorisMedium", 24), $"VSync: {Globals.APP_VSync}", 
-            new Vector2(10, 70), Color.White, effect: FontSystemEffect.Stroked, effectAmount: 2
+            new Vector2(10, 70), Color.White * 0.75f, effect: FontSystemEffect.Stroked, effectAmount: 2
         );
         sp.DrawString(
             ContentLoader.GetFont("NeorisMedium", 24), $"Sprites: {Globals.ENGINE_Main.Sprites.Count}", 
-            new Vector2(10, 95), Color.White, effect: FontSystemEffect.Stroked, effectAmount: 2
+            new Vector2(10, 95), Color.White * 0.75f, effect: FontSystemEffect.Stroked, effectAmount: 2
         );
     }
 }

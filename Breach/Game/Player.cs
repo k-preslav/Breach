@@ -73,7 +73,6 @@ public class Player : Sprite
         {
             _shootTimer = shootCooldown;
             canShoot = true;
-
         }
 
         // Movement

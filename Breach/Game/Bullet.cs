@@ -48,6 +48,10 @@ public class Bullet : Sprite
 
         if (this.HitsGet("s_enemy") is Enemy s)
         {
+            var pointsImage = Globals.GameManager.pointsImage;
+            if (!pointsImage.animationRunning) 
+                pointsImage.Animate(UIAnimation.ZoomInOut, 150, min:1, max:1.2f, once:true);
+
             s.Destroy();
             Globals.GameManager.Points++;
             Destroy();

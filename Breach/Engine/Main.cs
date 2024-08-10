@@ -12,6 +12,7 @@ namespace BraketsEngine;
 public class Main : Game
 {
     public List<Sprite> Sprites;
+    public List<UIElement> UI;
 
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
@@ -58,6 +59,7 @@ public class Main : Game
         new Camera(Vector2.Zero);
 
         this.Sprites = new List<Sprite>();
+        this.UI = new List<UIElement>();
 
         base.Initialize();
     }
@@ -73,7 +75,8 @@ public class Main : Game
         if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
             Exit();
 
-        Input.GetState();
+        Input.GetKeyboardState();
+        Input.GetMouseState();
 
         if (Input.IsPressed(Keys.F3))
             Globals.DEBUG_Overlay = !Globals.DEBUG_Overlay;
@@ -82,13 +85,19 @@ public class Main : Game
         Globals.DEBUG_DT = dt;
         Globals.DEBUG_FPS = 1 / dt;
 
-        _gameManager.Update(dt);
         Globals.Camera.CalculateMatrix();
 
-        if (Globals.STATUS_Loading)
-            return;
-        
         ParticleManager.Update();
+        foreach (var elem in UI.ToList())
+        {
+            elem.Update(dt);
+            elem.UpdateRect();
+        }
+        
+        if (Globals.STATUS_Loading || LoadingScreen.isLoading)
+            return;
+
+        _gameManager.Update(dt);
         foreach (var sp in Sprites.ToList())
         {
             sp.Update(dt);
@@ -99,27 +108,38 @@ public class Main : Game
 
     protected override void Draw(GameTime gameTime)
     {
-        GraphicsDevice.Clear(Color.CornflowerBlue); 
+        GraphicsDevice.Clear(Globals.Camera.BackgroundColor); 
         
         // ------- Game Layer -------
         _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, transformMatrix: Globals.Camera.TranslationMatrix);
         
-        if (Globals.STATUS_Loading)
+        if (!Globals.STATUS_Loading && !LoadingScreen.isLoading)
         {
-            _spriteBatch.End();
-            return;   
-        };
-
-        var sortedSprites = Sprites.OrderBy(sp => sp.Layer).ToList();
-        foreach (var sp in sortedSprites)
-        {
-            sp.Draw();
+            var sortedSprites = Sprites.OrderBy(sp => sp.Layer).ToList();
+            foreach (var sp in sortedSprites)
+            {
+                sp.Draw();
+            }
         }
         _spriteBatch.End();
-        
+
         // ------- UI Layer ------- 
         _spriteBatch.Begin();
-        _gameManager.TempRendrer();
+        foreach (var elem in UI.ToList())
+        {
+            if (LoadingScreen.isLoading)
+            {
+                if (elem.Tag.Contains("__loading__"))
+                {
+                    elem.DrawUI();
+                }
+
+                _spriteBatch.End();
+                return;
+            } 
+            
+            elem.DrawUI();
+        }
         _debugUi.DrawOverlay(_spriteBatch, 0.25f);
         _debugUi.DrawWindows(gameTime);
         _spriteBatch.End();
@@ -129,6 +149,9 @@ public class Main : Game
 
     public void AddSprite(Sprite sp) => Sprites.Add(sp);
     public void RemoveSprite(Sprite sp) => Sprites.Remove(sp);
+
+    public void AddUIElement(UIElement elem) => UI.Add(elem);
+    public void RemoveUIElement(UIElement elem) => UI.Remove(elem);
 
     private void OnExit(object sender, EventArgs e)
     {

@@ -27,6 +27,8 @@ public class Sprite
     internal Texture2D texture;
     internal string textureName;
 
+    internal bool overrideDraw = false;
+
     public Sprite(string tag, Vector2 pos, string texName, int layer=0, bool auto_load=true)
     {
         this.Tag = tag;
@@ -38,16 +40,14 @@ public class Sprite
             Load();
     }
 
-    public bool Load()
+    public void Load()
     {
         this.texture = ContentLoader.GetTexture(textureName);
         Globals.ENGINE_Main.AddSprite(this);
-
-        return true;
     }
 
     public virtual void Update(float dt) { }
-    public void UpdateRect()
+    public virtual void UpdateRect()
     {
         if (texture is null)
             return;
@@ -60,7 +60,7 @@ public class Sprite
 
     public void Draw()
     {
-        if (!visible || texture is null)
+        if (!visible || texture is null || overrideDraw)
             return;
 
         Globals.ENGINE_SpriteBatch.Draw(
