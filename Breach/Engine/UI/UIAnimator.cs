@@ -26,7 +26,7 @@ public class UIAnimator
         float initialOpacity = element.Opacity;
         float maxOpacity = max;
         float minOpacity = min;
-        int steps = 20;
+        int steps = duration / 5;
         float stepDuration = duration / (steps * 2);
 
         // Flashing in
@@ -51,7 +51,7 @@ public class UIAnimator
         Vector2 initialSize = element.Size;
         Vector2 maxSize = initialSize * max;
         Vector2 minSize = initialSize * min;
-        int steps = duration / 10;
+        int steps = duration / 5;
         float stepDuration = duration / (steps * 2);
 
         // Zoom in

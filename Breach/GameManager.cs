@@ -47,15 +47,39 @@ public class GameManager
 
     UIScreen mainMenu = new UIScreen();
     UIText titleText, startText;
-    UIImage toggleMusicImage, toggleSoundsImage;
+    UIImage titleImage, toggleMusicImage, toggleSoundsImage;
+    ParticleEmitter mainMenuParticles;
     bool isOnMainMenu = false;
 
     public void Start()
     {
         Globals.Camera.BackgroundColor = Color.Black;
+        Globals.Camera.Center();
 
         Globals.DEBUG_Overlay = false;
         isOnMainMenu = true;
+
+        titleImage = new UIImage("enemy");
+        titleImage.SetAlign(UIAllign.TopCenter, new Vector2(0, 100));
+        titleImage.Animate(UIAnimation.ZoomInOut, 1000, min:1, max:1.2f);
+        titleImage.Opacity = 0.85f;
+
+        mainMenuParticles = new ParticleEmitter("main_menu_particles", new Vector2(Globals.APP_Width / 2, 132), new ParticleEmitterData{
+            angleVariance = 360,
+            lifeSpanMin = 1.4f,
+            lifeSpanMax = 2.6f,
+            emitCount = 32,
+            sizeStartMin = 22,
+            sizeStartMax = 26,
+            sizeEndMin = 12,
+            sizeEndMax = 14,
+            interval = 0.15f,
+            speedMin=25,
+            speedMax=65,
+            colorStart = Color.DarkRed,
+            colorEnd = Color.Red,
+            visible = true,
+        }, 2);
 
         titleText = new UIText("Breach");
         titleText.SetAlign(UIAllign.Center, new Vector2(0));
@@ -95,7 +119,7 @@ public class GameManager
         };
 
         mainMenu.AddElements([
-            titleText, startText,
+            titleText, titleImage, startText,
             toggleSoundsImage, toggleMusicImage
         ]);
     }
@@ -104,6 +128,8 @@ public class GameManager
     {
         LoadingScreen.Initialize();
         LoadingScreen.Show();
+
+        ParticleManager.Unload("main_menu_particles");
         
         Health = 100;
         Points = 0;

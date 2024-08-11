@@ -10,7 +10,7 @@ public class LoadingScreen
     public static UIScreen loadingScreen;
     public static bool isLoading = false;
 
-    private static TimeSpan minimumLoadingTime = new TimeSpan(0, 0, 2);
+    private static TimeSpan minimumLoadingTime;
     private static DateTime loadStartTime;
 
     private static bool isInitialized = false;
@@ -35,6 +35,8 @@ public class LoadingScreen
 
     public static void Show()
     {
+        minimumLoadingTime = new TimeSpan(0, 0, 0, 0, Randomize.IntInRange(975, 2345));
+
         loadingScreen.Show();
 
         loadStartTime = DateTime.Now;
@@ -52,6 +54,8 @@ public class LoadingScreen
         {
             await Task.Delay(waitTime);
         }
+
+        Debug.Log($" - Total loading time: {realLoadingTime.TotalMilliseconds + waitTime.TotalMilliseconds} ms");
 
         loadingScreen.Hide();
         isLoading = false;
