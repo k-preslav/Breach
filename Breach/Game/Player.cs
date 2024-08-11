@@ -62,7 +62,8 @@ public class Player : Sprite
             }
          
             canShoot = false;
-            ContentLoader.GetSound("shoot").Play(volume: 10);
+            if (Globals.GameManager.areSoundsOn) 
+                ContentLoader.GetSound("shoot").Play(volume: 10);
 
             shootParticles.Position = new Vector2(Position.X, Position.Y - 35);
             shootParticles.Burst(100);

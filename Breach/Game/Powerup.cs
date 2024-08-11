@@ -76,7 +76,9 @@ public class Powerup : Sprite
             visible = false;
             player = p;
 
-            ContentLoader.GetSound("powerup").Play(50);
+            if (Globals.GameManager.areSoundsOn)
+                ContentLoader.GetSound("powerup").Play(50);
+            
             Globals.Camera.Shake(1.5f, 0.1f);
 
             trailParticles.SetVisible(false);

@@ -33,19 +33,21 @@ public class GameManager
     float _powerupSpawnTimer = 0;
     float _powerupUiTimer = 2;
 
-
     string backgroundMusicName = "background";
+    public bool isBackgroundMusicOn = true;
+    public bool areSoundsOn = true;
 
     UIScreen gameHud = new UIScreen();
     UIText healthText, pointsText, heatText, currentPowerupText;
-    UIImage healthImage, heatImage; 
+    UIImage healthImage, heatImage, backgroundImage; 
     public UIImage pointsImage;
 
     UIScreen gameOverHud = new UIScreen();
-    UIText gameOverText, gameOverScoreText, countinueText;
+    UIText gameOverText, gameOverScoreText, countinueText, returnText;
 
     UIScreen mainMenu = new UIScreen();
     UIText titleText, startText;
+    UIImage toggleMusicImage, toggleSoundsImage;
     bool isOnMainMenu = false;
 
     public void Start()
@@ -66,8 +68,35 @@ public class GameManager
         startText.Opacity = 0.75f;
         startText.Animate(UIAnimation.SmoothFlashing, 750, min: 0.35f);
 
+        toggleSoundsImage = new UIImage();
+        if (areSoundsOn) toggleSoundsImage.SetImage("ui/sounds_on");
+        else toggleSoundsImage.SetImage("ui/sounds_off");
+        toggleSoundsImage.Size = new Vector2(36);
+        toggleSoundsImage.SetAlign(UIAllign.Center, new Vector2(-36, 72));
+        toggleSoundsImage.OnClick += () => {
+            toggleSoundsImage.Animate(UIAnimation.ZoomInOut, 100, min:1, max:1.1f, once:true);
+
+            areSoundsOn = !areSoundsOn;
+            if (areSoundsOn) toggleSoundsImage.SetImage("ui/sounds_on");
+            else toggleSoundsImage.SetImage("ui/sounds_off");
+        };
+
+        toggleMusicImage = new UIImage();
+        if (isBackgroundMusicOn) toggleMusicImage.SetImage("ui/music_on");
+        else toggleMusicImage.SetImage("ui/music_off");
+        toggleMusicImage.Size = new Vector2(36);
+        toggleMusicImage.SetAlign(UIAllign.Center, new Vector2(36, 72));
+        toggleMusicImage.OnClick += () => {
+            toggleMusicImage.Animate(UIAnimation.ZoomInOut, 100, min:1, max:1.1f, once:true);
+
+            isBackgroundMusicOn = !isBackgroundMusicOn;
+            if (isBackgroundMusicOn) toggleMusicImage.SetImage("ui/music_on");
+            else toggleMusicImage.SetImage("ui/music_off");
+        };
+
         mainMenu.AddElements([
-            titleText, startText
+            titleText, startText,
+            toggleSoundsImage, toggleMusicImage
         ]);
     }
 
@@ -112,6 +141,26 @@ public class GameManager
         pointsImage.SetAlign(UIAllign.TopLeft, new Vector2(166, 10));
         pointsImage.Size = new Vector2(32);
 
+        Vector2 soundsIconMargin = new Vector2(8);
+        if (!isBackgroundMusicOn)
+        {
+            toggleMusicImage.Size = new Vector2(32);
+            toggleMusicImage.SetAlign(UIAllign.TopRigth, new Vector2(8));
+            toggleMusicImage.Clickable = false;
+
+            soundsIconMargin = new Vector2(52, 8);
+        } else toggleMusicImage.visible = false;
+        if (!areSoundsOn)
+        {
+            toggleSoundsImage.Size = new Vector2(28);
+            toggleSoundsImage.SetAlign(UIAllign.TopRigth, soundsIconMargin);
+            toggleSoundsImage.Clickable = false;
+        } else toggleSoundsImage.visible = false;
+
+        backgroundImage = new UIImage();
+        backgroundImage.Size = new Vector2(512, 52);
+        backgroundImage.BackgroundColor = Color.Black;
+
         currentPowerupText = new UIText();
         currentPowerupText.SetAlign(UIAllign.Center, new Vector2(0));
         currentPowerupText.SetFontSize(56);
@@ -119,9 +168,11 @@ public class GameManager
         currentPowerupText.visible = false;
 
         gameHud.AddElements([
+            backgroundImage,
             healthText, healthImage,
             heatText, heatImage,
             pointsText, pointsImage,
+            toggleSoundsImage, toggleMusicImage,
             currentPowerupText
         ]);
 
@@ -135,15 +186,20 @@ public class GameManager
         gameOverScoreText.Opacity = 0.75f;
 
         countinueText = new UIText("Press Enter to Try Again!");
-        countinueText.SetAlign(UIAllign.BottomCenter, new Vector2(0, 36));
+        countinueText.SetAlign(UIAllign.BottomCenter, new Vector2(0, 68));
         countinueText.SetFont("NeorisRegular");
         countinueText.SetFontSize(32);
-        countinueText.Opacity = 0.75f;
         countinueText.Animate(UIAnimation.SmoothFlashing, 750, min: 0.35f);
+
+        returnText = new UIText("Press Escape to return to Main Menu");
+        returnText.SetAlign(UIAllign.BottomCenter, new Vector2(0, 18));
+        returnText.SetFont("NeorisRegular");
+        returnText.SetFontSize(24);
+        returnText.Animate(UIAnimation.SmoothFlashing, 750, min: 0.3f, max:0.5f);
 
         gameOverHud.AddElements([
             gameOverText, gameOverScoreText,
-            countinueText
+            countinueText, returnText
         ]);
         gameOverHud.Hide();
 
@@ -151,7 +207,7 @@ public class GameManager
         ContentLoader.Load(ContentType.Level, "level0");
 
         var song = ContentLoader.GetSong(backgroundMusicName);
-        song.Play();
+        if (isBackgroundMusicOn) song.Play();
         song.SetVolume(5);
 
         enemies = new List<Enemy>();
@@ -172,6 +228,21 @@ public class GameManager
                 StartGame();
             }
             return;
+        }
+
+        if (Input.IsPressed(Keys.Escape))
+        {
+            Globals.ENGINE_Main.Sprites.Clear();
+            
+            gameHud.Unload();
+            gameOverHud.Unload();
+
+            ContentLoader.GetSong(backgroundMusicName).Stop();
+
+            ParticleManager.UnloadAll();
+            ContentLoader.UnloadLevel("level0");
+
+            Start();
         }
 
         if (GameOver)
@@ -200,7 +271,7 @@ public class GameManager
         if (Input.IsDown(Keys.LeftAlt) && Input.IsPressed(Keys.S))
         {
             backgroundMusicName = "background2";
-            ContentLoader.GetSong(backgroundMusicName).Play();
+            if (isBackgroundMusicOn) ContentLoader.GetSong(backgroundMusicName).Play();
         }
 
         if (Health <= 0)

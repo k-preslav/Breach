@@ -23,9 +23,10 @@ public enum UIAllign
 public abstract class UIElement : Sprite
 {
     public string Text;
-    public Action OnClick;
     public Color BackgroundColor = Color.White;
     public Color ForegroundColor = Color.Black;
+    public Action OnClick;
+    public bool Clickable = true;
 
     public Vector2 Size;
 
@@ -118,12 +119,15 @@ public abstract class UIElement : Sprite
             ) - margin;
         }
 
-        if (this.Rect.Intersects(
-            new Rectangle(Input.GetMousePosition().ToPoint(), new Point(1, 1))
-        ))
+        if (this.Clickable)
         {
-            if (Input.IsMouseClicked(0))
-                OnClick?.Invoke();
+            if (this.Rect.Intersects(
+                new Rectangle(Input.GetMousePosition().ToPoint(), new Point(1, 1))
+            ))
+            {
+                if (Input.IsMouseClicked(0))
+                    OnClick?.Invoke();
+            }
         }
 
         CustomUpdate?.Invoke();

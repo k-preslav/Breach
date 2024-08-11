@@ -70,7 +70,8 @@ public class Enemy : Sprite
     public void Destroy()
     {
         // Get random destroy sound
-        ContentLoader.GetSound("enemy_destroyed").Play(100);
+        if (Globals.GameManager.areSoundsOn)
+            ContentLoader.GetSound("enemy_destroyed").Play(100);
 
         // Destroy
         this.visible = false;
